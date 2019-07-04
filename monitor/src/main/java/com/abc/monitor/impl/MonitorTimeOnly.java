@@ -1,6 +1,6 @@
 package com.abc.monitor.impl;
 
-import com.abc.monitor.server.MonitorServer;
+import com.abc.monitor.server.MonitorLog;
 import javassist.CannotCompileException;
 import javassist.CtMethod;
 
@@ -13,6 +13,7 @@ public class MonitorTimeOnly extends BaseMonitor {
     @Override
     public void doMonitor(CtMethod ctMethod) throws CannotCompileException {
         String before = "long monitor_start_time = System.currentTimeMillis(); System.out.println(monitor_start_time);";
+        before = new MonitorLog("slsjdksadljsakdsa").getJavaCode();
         String after = "System.out.println(" + "\"" + ctMethod.getDeclaringClass().getSimpleName() + "." + ctMethod.getName()
                 + "() cost: " + "\"" + " + (System.currentTimeMillis() /*- monitor_start_time*/)" + " + \" ms\");";
         System.out.println("【MonitorTimeOnly】 before: " + before);

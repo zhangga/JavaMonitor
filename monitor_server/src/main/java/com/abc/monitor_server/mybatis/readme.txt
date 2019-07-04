@@ -1,0 +1,4 @@
+此包下放的都是自动生成的mapper和pojo
+与此对应的xml文件放在resources/mybatis/mapper下
+
+手动写的一些model和mapper，建议放在外层
