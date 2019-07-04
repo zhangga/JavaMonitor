@@ -1,6 +1,9 @@
 package com.abc.monitor_server.service;
 
 import com.abc.monitor_server.config.RET;
+import com.abc.monitor_server.mapper.LogMapper;
+import com.abc.monitor_server.model.LogData;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -19,6 +22,9 @@ public class MonitorService {
 
     /** 每秒数据库写入操作 */
     private static final int OPS = 1500;
+
+    @Autowired
+    private LogMapper logMapper;
 
     /**
      * 添加监控日志
@@ -44,6 +50,10 @@ public class MonitorService {
         int count = 0;
         String log = null;
         while (count < OPS && (log = logQueue.poll()) != null) {
+            LogData data = LogData.getData(log);
+            if (data == null)
+                continue;
+            logMapper.insert(data);
             count++;
         }
         // 高负载

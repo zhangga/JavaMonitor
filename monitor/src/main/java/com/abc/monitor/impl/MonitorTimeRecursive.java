@@ -1,5 +1,6 @@
 package com.abc.monitor.impl;
 
+import com.abc.monitor.server.MonitorLog;
 import javassist.CannotCompileException;
 import javassist.CtMethod;
 import javassist.expr.ExprEditor;
@@ -17,9 +18,15 @@ public class MonitorTimeRecursive extends BaseMonitor {
         ctMethod.instrument(new ExprEditor(){
             @Override
             public void edit(MethodCall m) throws CannotCompileException {
-                m.replace("{ long stime = System.currentTimeMillis(); $_ = $proceed($$);System.out.println(\""
-                        + m.getClassName() + "." + m.getMethodName()
-                        + " cost:\" + (System.currentTimeMillis() - stime) + \" ms\");}");
+                String className = m.getClassName();
+                String methodName = m.getMethodName();
+                if (className.startsWith("java.")) {
+                    return;
+                }
+                m.replace("{ long _stime = System.nanoTime(); $_ = $proceed($$); "
+                        + "long _etime = System.nanoTime(); long _ctime = System.currentTimeMillis(); "
+                        + new MonitorLog(className, methodName, "_stime", "_etime", "_ctime").getJavaCode()
+                        + "}");
             }
         });
     }

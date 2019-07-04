@@ -3,7 +3,6 @@ package com.abc.monitor;
 import com.abc.monitor.config.MonitorConfig;
 import com.abc.monitor.server.MonitorServer;
 
-import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
 
 /**
@@ -27,8 +26,7 @@ public class AOPAgent {
         MonitorServer.start();
 
         _inst = inst;
-        ClassFileTransformer trans = new AOPAgentTransformer();
-        _inst.addTransformer(trans);
+        _inst.addTransformer(new AOPAgentTransformer());
     }
 
 }

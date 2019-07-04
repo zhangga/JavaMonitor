@@ -13,7 +13,7 @@ import java.util.concurrent.*;
 public class MonitorServer {
 
     /** 日志队列 */
-    private static ConcurrentLinkedQueue<MonitorLog> queue = new ConcurrentLinkedQueue<>();
+    private static ConcurrentLinkedQueue<String> queue = new ConcurrentLinkedQueue<>();
     /** 失败日志队列 */
     private static ConcurrentLinkedDeque<String> failedQueue = new ConcurrentLinkedDeque<>();
 
@@ -34,7 +34,7 @@ public class MonitorServer {
      * @param log
      */
     public static void submit(String log) {
-        queue.add(new MonitorLog(log));
+        queue.add(log);
     }
 
     /**
@@ -55,15 +55,15 @@ public class MonitorServer {
         }, 1000, interval);
 
         // 测试
-        Timer timer1 = new Timer();
-        timer1.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                for (int i = 0; i < 100; i++) {
-                    submit("测试日志。。。");
-                }
-            }
-        }, 1000, 100);
+//        Timer timer1 = new Timer();
+//        timer1.schedule(new TimerTask() {
+//            @Override
+//            public void run() {
+//                for (int i = 0; i < 100; i++) {
+//                    submit("测试日志。。。");
+//                }
+//            }
+//        }, 1000, 100);
     }
 
     /**
@@ -79,12 +79,12 @@ public class MonitorServer {
         }
         // 正常发送日志队列
         else {
-            MonitorLog log = null;
+            String log = null;
             // 调节发送速率
             int sendMax = queue.size() > max * 4 ? max * 2 : max;
             // 打包日志一起发送
             while (count < sendMax && (log = queue.poll()) != null) {
-                logs.append(log.getLog()).append(SEPARATION);
+                logs.append(log).append(SEPARATION);
                 count++;
             }
             // 如果超过发送速率的10倍，直接加入失败队列
@@ -131,7 +131,7 @@ public class MonitorServer {
     private static void moveToFailed() {
         // 当前队列日志直接加入失败队列
         while (!queue.isEmpty()) {
-            failedQueue.add(queue.poll().getLog());
+            failedQueue.add(queue.poll());
         }
     }
 

@@ -10,6 +10,8 @@ public enum EnumMonitorType {
 
     TIME_ONLY(1, MonitorTimeOnly.class, "监控方法的执行时间"),
     TIME_RECURSIVE(2, MonitorTimeRecursive.class, "监控方法中所有方法的执行时间"),
+    INSERT_BEFORE(3, MonitorInsertBefore.class, "在方法开头插入代码"),
+    INSERT_AFTER(4, MonitorInsertAfter.class, "在方法结尾插入代码"),
     ;
 
     /** 类型 */

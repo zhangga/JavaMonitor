@@ -23,8 +23,22 @@ public class MonitorConfig {
     /** 方法监控 */
     public static Map<String, ClassMonitor> classMonitors = new HashMap<>();
 
+    private static File configFile = null;
+    private static String lastModified = null;
+
+    /** 监控配置文件变化 */
+//    private static ExecutorService service = Executors.newSingleThreadExecutor();
+
     public static void init() {
-        try (FileReader fr = new FileReader(PATH);BufferedReader br = new BufferedReader(fr)) {
+        configFile = new File(PATH);
+        lastModified = getLastModified(configFile);
+        loadConfig();
+//        service.submit(LOOK_CONFIG);
+    }
+
+    private static void loadConfig() {
+        classMonitors.clear();
+        try (FileReader fr = new FileReader(configFile);BufferedReader br = new BufferedReader(fr)) {
             String line = null;
             while ((line = br.readLine()) != null) {
                 // 注释
@@ -61,6 +75,25 @@ public class MonitorConfig {
         }
     }
 
+    private static Runnable LOOK_CONFIG = new Runnable() {
+        @Override
+        public void run() {
+            while (true) {
+                try {
+                    Thread.sleep(30000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                String newModified = getLastModified(configFile);
+                if (!lastModified.equals(newModified)) {
+                    System.out.println("==================监控配置文件发生变化==================");
+                    lastModified = newModified;
+                    loadConfig();
+                }
+            }
+        }
+    };
+
     /**
      * 类是否在监控列表中
      * @param className
@@ -83,6 +116,13 @@ public class MonitorConfig {
             return null;
         }
         return cm.getMethodMonitors(ctMethod);
+    }
+
+    private static String getLastModified(File file) {
+        if (file == null) {
+            return null;
+        }
+        return new StringBuilder().append(file.length()).append(file.lastModified()).toString();
     }
 
 }
