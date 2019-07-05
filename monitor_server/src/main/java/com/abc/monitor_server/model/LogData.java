@@ -1,5 +1,7 @@
 package com.abc.monitor_server.model;
 
+import java.util.Date;
+
 /**
  * Created by U-Demon
  * Date: 2019/7/4
@@ -14,7 +16,7 @@ public class LogData {
 
     private Long run_time;
 
-    private Long log_time;
+    private Date log_time;
 
     public LogData() {
 
@@ -28,7 +30,7 @@ public class LogData {
         data.class_name = datas[0];
         data.method_name = datas[1];
         data.run_time = Long.valueOf(datas[2]);
-        data.log_time = Long.valueOf(datas[3]);
+        data.log_time = new Date(Long.valueOf(datas[3]));
         return data;
     }
 
@@ -64,11 +66,11 @@ public class LogData {
         this.run_time = run_time;
     }
 
-    public Long getLog_time() {
+    public Date getLog_time() {
         return log_time;
     }
 
-    public void setLog_time(Long log_time) {
+    public void setLog_time(Date log_time) {
         this.log_time = log_time;
     }
 }
